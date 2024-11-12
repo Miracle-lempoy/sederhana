@@ -96,6 +96,26 @@
         #calcResult {
             margin-top: 10px;
         }
+
+        /* Link Foto */
+        #imageLink {
+            margin-top: 10px;
+        }
+
+        .image-link-button {
+            margin-top: 10px;
+            display: block;
+            text-align: center;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border-radius: 4px;
+            text-decoration: none;
+        }
+
+        .image-link-button:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
@@ -151,6 +171,7 @@
         <div id="uploadFoto">
             <input type="file" id="fileInput" accept="image/*">
             <button id="showImageButton">Tampilkan Foto</button>
+            <div id="imageLink"></div>
         </div>
 
         <!-- Kalkulator -->
@@ -178,6 +199,9 @@
 </div>
 
 <script>
+    // API key untuk ImgBB
+    const API_KEY = 'e2a5ab33d806a871d5bc8b0598dca974'; 
+
     // Menangani perubahan pilihan Platform (1, 2, 3)
     document.getElementById('platformSelect').addEventListener('change', function() {
         const platform = this.value;
@@ -220,7 +244,7 @@
             window.open('https://www.google.com/search?q=' + encodeURIComponent(query), '_blank');
         } else if (platform === 'pinterest') {
             window.open('https://www.pinterest.com/search/pins/?q=' + encodeURIComponent(query), '_blank');
-        } else if (platform === 'yt') {
+} else if (platform === 'yt') {
             window.open('https://www.youtube.com/results?search_query=' + encodeURIComponent(query), '_blank');
         }
     });
@@ -234,7 +258,7 @@
         if (platform) {
             queryInput.style.display = 'block';
             searchButton.style.display = 'block';
-} else {
+        } else {
             queryInput.style.display = 'none';
             searchButton.style.display = 'none';
         }
@@ -274,7 +298,7 @@
         }
     });
 
-    // Unggah Foto
+    // Unggah Foto dan Tampilkan Gambar dengan Link
     document.getElementById('showImageButton').addEventListener('click', function() {
         const fileInput = document.getElementById('fileInput');
         const file = fileInput.files[0];
@@ -288,10 +312,37 @@
                 img.style.height = 'auto';
                 document.getElementById('results').innerHTML = '';
                 document.getElementById('results').appendChild(img);
+
+                // Upload image to ImgBB API
+                uploadImageToImgBB(file);
             };
             reader.readAsDataURL(file);
         }
     });
+
+    // Fungsi untuk mengunggah gambar ke ImgBB
+    function uploadImageToImgBB(file) {
+        const formData = new FormData();
+        formData.append('image', file);
+
+        fetch('https://api.imgbb.com/1/upload?key=' + API_KEY, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data && data.data && data.data.url) {
+                const imgUrl = data.data.url;
+                const imageLinkElement = document.getElementById('imageLink');
+                imageLinkElement.innerHTML = `<a href="${imgUrl}" target="_blank" class="image-link-button">Kunjungi Foto</a>`;
+            } else {
+                console.error('Gagal mendapatkan URL gambar.');
+            }
+        })
+        .catch(error => {
+            console.error('Terjadi kesalahan saat mengunggah gambar:', error);
+        });
+    }
 
     // Kalkulator
     document.getElementById('calcBtn').addEventListener('click', function() {
