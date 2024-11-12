@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Platform Search and Tools</title>
+    <style>
+        /* Reset beberapa style dasar untuk memulai dengan gaya yang bersih */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+
+        .container {
+            width: 80%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        /* Dropdown Platform */
+        select {
+            padding: 10px;
+            width: 100%;
+            margin-bottom: 20px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+
+        .section {
+            margin-bottom: 20px;
+        }
+
+        /* Platform 1, Platform 2, Platform 3 Inputs */
+        #platform1Search, #platform2Search, #platform3Search {
+            display: none;
+        }
+
+        /* Platform 3 - Input Fields for Foto, Kalkulator, YouTube */
+        #uploadFoto, #calcSection, #ytLinkSection {
+            display: none;
+        }
+
+        /* Button Style */
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        input[type="text"], input[type="number"], input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        /* Style for Results */
+        .results {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+        }
+
+        /* Kalkulator & YouTube */
+        #calcResult {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Platform Search and Tools</h1>
+
+    <!-- Platform Select -->
+    <div class="section">
+        <select id="platformSelect">
+            <option value="">Pilih...</option>
+            <option value="platform1">Platform 1</option>
+            <option value="platform2">Platform 2</option>
+            <option value="platform3">Platform 3</option>
+        </select>
+    </div>
+
+    <!-- Platform 1 (Google, Pinterest, YouTube) -->
+    <div class="section" id="platform1Search">
+        <select id="platform1Select">
+            <option value="">Pilih...</option>
+            <option value="google">Google</option>
+            <option value="pinterest">Pinterest</option>
+            <option value="yt">YouTube</option>
+        </select>
+        <input type="text" id="platform1Query" placeholder="Masukkan kata pencarian" style="display:none;">
+        <button id="platform1SearchButton" style="display:none;">Cari</button>
+    </div>
+
+    <!-- Platform 2 (Shopee, Bukalapak, Lazada, Tokopedia) -->
+    <div class="section" id="platform2Search">
+        <select id="platform2Select">
+            <option value="">Pilih...</option>
+            <option value="shopee">Shopee</option>
+            <option value="bukalapak">Bukalapak</option>
+            <option value="lazada">Lazada</option>
+            <option value="tokopedia">Tokopedia</option>
+        </select>
+        <input type="text" id="platform2Query" placeholder="Masukkan kata pencarian" style="display:none;">
+        <button id="platform2SearchButton" style="display:none;">Cari</button>
+    </div>
+
+    <!-- Platform 3 (Unggah Foto, Kalkulator, Link YouTube) -->
+    <div class="section" id="platform3Search">
+        <select id="platform3Select">
+            <option value="">Pilih...</option>
+            <option value="uploadFoto">Unggah Foto</option>
+            <option value="calc">Kalkulator</option>
+            <option value="ytLink">Link YouTube</option>
+        </select>
+
+        <!-- Unggah Foto -->
+        <div id="uploadFoto">
+            <input type="file" id="fileInput" accept="image/*">
+            <button id="showImageButton">Tampilkan Foto</button>
+        </div>
+
+        <!-- Kalkulator -->
+        <div id="calcSection">
+            <input type="text" id="calcInput" placeholder="Masukkan angka">
+            <button id="calcBtn">Hitung</button>
+            <div id="calcResult"></div>
+        </div>
+
+        <!-- Link YouTube -->
+        <div id="ytLinkSection">
+            <input type="text" id="ytLinkInput" placeholder="Masukkan link YouTube">
+            <button id="ytLinkBtn">Tampilkan Video</button>
+        </div>
+    </div>
+
+    <!-- Tempat untuk Menampilkan Hasil -->
+    <div id="results"></div>
+
+    <!-- Tombol Refresh -->
+    <div class="section">
+        <button id="refreshButton">Refresh Halaman</button>
+        <p>Refresh halaman jika kembali ke halaman ini.</p>
+    </div>
+</div>
+
+<script>
+    // Menangani perubahan pilihan Platform (1, 2, 3)
+    document.getElementById('platformSelect').addEventListener('change', function() {
+        const platform = this.value;
+
+        // Sembunyikan semua input
+        document.getElementById('platform1Search').style.display = 'none';
+        document.getElementById('platform2Search').style.display = 'none';
+        document.getElementById('platform3Search').style.display = 'none';
+
+        // Tampilkan input yang sesuai berdasarkan platform yang dipilih
+        if (platform === 'platform1') {
+            document.getElementById('platform1Search').style.display = 'block';
+        } else if (platform === 'platform2') {
+            document.getElementById('platform2Search').style.display = 'block';
+        } else if (platform === 'platform3') {
+            document.getElementById('platform3Search').style.display = 'block';
+        }
+    });
+
+    // Menangani pilihan untuk Platform 1 (Google, Pinterest, YouTube)
+    document.getElementById('platform1Select').addEventListener('change', function() {
+        const platform = this.value;
+        const queryInput = document.getElementById('platform1Query');
+        const searchButton = document.getElementById('platform1SearchButton');
+
+        if (platform) {
+            queryInput.style.display = 'block';
+            searchButton.style.display = 'block';
+        } else {
+            queryInput.style.display = 'none';
+            searchButton.style.display = 'none';
+        }
+    });
+
+    document.getElementById('platform1SearchButton').addEventListener('click', function() {
+        const platform = document.getElementById('platform1Select').value;
+        const query = document.getElementById('platform1Query').value;
+
+        if (platform === 'google') {
+            window.open('https://www.google.com/search?q=' + encodeURIComponent(query), '_blank');
+        } else if (platform === 'pinterest') {
+            window.open('https://www.pinterest.com/search/pins/?q=' + encodeURIComponent(query), '_blank');
+        } else if (platform === 'yt') {
+            window.open('https://www.youtube.com/results?search_query=' + encodeURIComponent(query), '_blank');
+        }
+    });
+
+    // Menangani pilihan untuk Platform 2 (Shopee, Bukalapak, Lazada, Tokopedia)
+    document.getElementById('platform2Select').addEventListener('change', function() {
+        const platform = this.value;
+        const queryInput = document.getElementById('platform2Query');
+        const searchButton = document.getElementById('platform2SearchButton');
+
+        if (platform) {
+            queryInput.style.display = 'block';
+            searchButton.style.display = 'block';
+} else {
+            queryInput.style.display = 'none';
+            searchButton.style.display = 'none';
+        }
+    });
+
+    document.getElementById('platform2SearchButton').addEventListener('click', function() {
+        const platform = document.getElementById('platform2Select').value;
+        const query = document.getElementById('platform2Query').value;
+
+        if (platform === 'shopee') {
+            window.open('https://shopee.co.id/search?keyword=' + encodeURIComponent(query), '_blank');
+        } else if (platform === 'bukalapak') {
+            window.open('https://www.bukalapak.com/products?search=' + encodeURIComponent(query), '_blank');
+        } else if (platform === 'lazada') {
+            window.open('https://www.lazada.co.id/catalog/?q=' + encodeURIComponent(query), '_blank');
+        } else if (platform === 'tokopedia') {
+            window.open('https://www.tokopedia.com/search?st=product&q=' + encodeURIComponent(query), '_blank');
+        }
+    });
+
+    // Menangani pilihan untuk Platform 3 (Unggah Foto, Kalkulator, Link YouTube)
+    document.getElementById('platform3Select').addEventListener('change', function() {
+        const platform = this.value;
+
+        // Sembunyikan semua bagian Platform 3
+        document.getElementById('uploadFoto').style.display = 'none';
+        document.getElementById('calcSection').style.display = 'none';
+        document.getElementById('ytLinkSection').style.display = 'none';
+        document.getElementById('results').innerHTML = ''; // Clear previous results
+
+        if (platform === 'uploadFoto') {
+            document.getElementById('uploadFoto').style.display = 'block';
+        } else if (platform === 'calc') {
+            document.getElementById('calcSection').style.display = 'block';
+        } else if (platform === 'ytLink') {
+            document.getElementById('ytLinkSection').style.display = 'block';
+        }
+    });
+
+    // Unggah Foto
+    document.getElementById('showImageButton').addEventListener('click', function() {
+        const fileInput = document.getElementById('fileInput');
+        const file = fileInput.files[0];
+
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.src = e.target.result;
+                img.style.width = '100%';
+                img.style.height = 'auto';
+                document.getElementById('results').innerHTML = '';
+                document.getElementById('results').appendChild(img);
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Kalkulator
+    document.getElementById('calcBtn').addEventListener('click', function() {
+        const input = document.getElementById('calcInput').value;
+        const calcResult = document.getElementById('calcResult');
+
+        try {
+            const result = eval(input);
+            calcResult.textContent = 'Hasil: ' + result;
+        } catch (error) {
+            calcResult.textContent = 'Input tidak valid!';
+        }
+    });
+
+    // Link YouTube
+    document.getElementById('ytLinkBtn').addEventListener('click', function() {
+        const ytLink = document.getElementById('ytLinkInput').value;
+
+        // Validasi link YouTube
+        const ytRegex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/]+\/\S+\/|(?:v|e(?:mbed)?)\/)([A-Za-z0-9_-]+)|youtu\.be\/([A-Za-z0-9_-]+))/;
+        const matches = ytLink.match(ytRegex);
+
+        if (matches && (matches[1] || matches[2])) {
+            const videoId = matches[1] || matches[2];
+            const iframe = document.createElement('iframe');
+            iframe.src = `https://www.youtube.com/embed/${videoId}`;
+            iframe.width = '100%';
+            iframe.height = '315';
+            iframe.frameBorder = '0';
+            iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+            iframe.allowFullscreen = true;
+
+            document.getElementById('results').innerHTML = '';  // Clear any previous results
+            document.getElementById('results').appendChild(iframe);
+        } else {
+            alert('Link YouTube tidak valid. Mohon masukkan URL video YouTube yang valid.');
+        }
+    });
+
+    // Fungsi untuk reset hasil ketika berpindah platform
+    function clearResults() {
+        document.getElementById('results').innerHTML = '';  // Hapus semua hasil sebelumnya
+    }
+
+    // Deteksi perubahan platform dan clear hasil
+    document.getElementById('platformSelect').addEventListener('change', clearResults);
+    document.getElementById('platform1Select').addEventListener('change', clearResults);
+    document.getElementById('platform2Select').addEventListener('change', clearResults);
+    document.getElementById('platform3Select').addEventListener('change', clearResults);
+
+    // Fungsi untuk menyegarkan halaman
+    document.getElementById('refreshButton').addEventListener('click', function() {
+        location.reload();  // Segarkan halaman
+    });
+</script>
+
+</body>
+</html>
