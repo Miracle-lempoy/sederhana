@@ -226,7 +226,7 @@
         }
     });
 
-// Platform 3: Upload Foto, Kalkulator, YouTube Link
+    // Platform 3: Upload Foto, Kalkulator, YouTube Link
     document.getElementById('platform3Select').addEventListener('change', function() {
         const platform = this.value;
 
@@ -255,25 +255,19 @@
             // Tampilkan teks "Sedang diproses..."
             document.getElementById('uploadStatus').innerText = 'Sedang diproses...';
 
-            // Proses upload gambar ke ImgBB hanya jika tombol belum ditekan sebelumnya dalam sehari
-            if (!sessionStorage.getItem('lastClicked') || new Date().getDate() !== new Date(sessionStorage.getItem('lastClicked')).getDate()) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const img = new Image();
-                    img.src = e.target.result;
-                    img.style.width = '100%';
-                    img.style.height = 'auto';
-                    document.getElementById('results').innerHTML = '';
-                    document.getElementById('results').appendChild(img);
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.src = e.target.result;
+                img.style.width = '100%';
+                img.style.height = 'auto';
+                document.getElementById('results').innerHTML = '';
+                document.getElementById('results').appendChild(img);
 
-                    // Upload image to ImgBB API
-                    uploadImageToImgBB(file);
-                    sessionStorage.setItem('lastClicked', new Date().toString()); // Simpan waktu klik terakhir
-                };
-                reader.readAsDataURL(file);
-            } else {
-                alert("Anda sudah menekan tombol ini hari ini. Harap coba lagi besok.");
-            }
+                // Upload image to ImgBB
+                uploadImageToImgBB(file);
+            };
+            reader.readAsDataURL(file);
         } else {
             alert('Silakan pilih file terlebih dahulu.');
         }
